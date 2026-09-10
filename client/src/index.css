@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Devonshire&family=Outfit:wght@100..900&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap');
+
+@import "tailwindcss";
+
+*{
+    font-family: "Rethink Sans", sans-serif;
+}
+button {
+    @apply cursor-pointer;
+}
+
+.no-scrollbar::-webkit-scrollbar{
+    display: none;
+}
+
+.cl-drawerRoot{
+    z-index: 100;
+}
+ 
+@theme {
+  --color-brand-50: #f4fceb;
+  --color-brand-100: #e6f9d3;
+  --color-brand-500: #65a30d;
+  --color-brand-600: #4d7c0f;
+  --color-brand-700: #3f6212;
+}
+

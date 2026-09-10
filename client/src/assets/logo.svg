@@ -1,0 +1,83 @@
+<svg width="780" height="210" viewBox="0 0 780 210"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Profile Logo (Natively enlarged shapes) -->
+  <g transform="translate(15 20)">
+
+    <!-- Blue profile shape -->
+    <path
+      d="M90 6
+         C44 6 12 38 12 84
+         C12 130 44 162 90 162
+         C136 162 168 130 168 84
+         C168 38 136 6 90 6Z"
+      fill="#2563EB"/>
+
+    <!-- Dark P Symbol -->
+    <path
+      d="M64 38
+         H100
+         C122 38 136 51 136 71
+         C136 90 122 103 100 103
+         H86
+         V128
+         H64
+         V38Z
+         M86 57
+         V84
+         H98
+         C108 84 114 80 114 71
+         C114 62 108 57 98 57
+         H86Z"
+      fill="#0F172A"/>
+
+    <!-- Purple user icon badge -->
+    <circle
+      cx="123"
+      cy="121"
+      r="26"
+      fill="#9333EA"/>
+
+    <circle
+      cx="123"
+      cy="114"
+      r="8"
+      fill="white"/>
+
+    <path
+      d="M107 140
+         C107 130 114 124 123 124
+         C132 124 139 130 139 140Z"
+      fill="white"/>
+
+    <!-- Green price tag detailing node -->
+    <path
+      d="M136 133
+         L165 104
+         L184 123
+         L155 152
+         Z"
+      fill="#22C55E"/>
+
+    <circle
+      cx="160"
+      cy="117"
+      r="4"
+      fill="white"/>
+  </g>
+
+  <!-- Profileza wordmark (Perfectly aligned with larger font) -->
+  <text
+    x="225"
+    y="132"
+    font-family="Inter, Arial, Helvetica, sans-serif"
+    font-size="82"
+    font-weight="700"
+    letter-spacing="-2.5">
+
+    <tspan fill="#7ED321">Profile</tspan>
+    <tspan fill="#166534">za</tspan>
+
+  </text>
+
+</svg>
