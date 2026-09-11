@@ -10,6 +10,7 @@ import MyOrders from './pages/MyOrders'
 import Loading from './pages/Loading'
 import { useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import ChatBox from './components/ChatBox'
 
 const App = () => {
 
@@ -32,7 +33,7 @@ const App = () => {
         
 
      </Routes>
-
+     <ChatBox />
 
     </div>
   )

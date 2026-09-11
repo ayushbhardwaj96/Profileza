@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getProfileLink, platformIcons } from '../assets/assets'
 import { useDispatch, useSelector } from 'react-redux'
 import { ArrowLeftIcon,  ArrowUpRightFromSquareIcon, CheckCircle2, Loader2Icon,DollarSign, ChevronLeftIcon, ChevronRightIcon, Users, LineChart, Eye, Calendar, MapPin, MessageSquareMoreIcon, ShoppingBagIcon } from 'lucide-react'
+import { setChat } from '../app/features/chatSlice'
 
 const ListingDetails = () => {
 
@@ -28,7 +29,7 @@ const ListingDetails = () => {
   }
 
   const loadChatbox = () => {
-
+       dispatch(setChat({listing: listing}))
   }
 
   useEffect(()=>{
