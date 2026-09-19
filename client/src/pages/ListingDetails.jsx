@@ -29,8 +29,8 @@ const ListingDetails = () => {
   }
 
   const loadChatbox = () => {
-       dispatch(setChat({listing: listing}))
-  }
+    dispatch(setChat({ listing }));
+  };
 
   useEffect(()=>{
     const listing = listings.find((listing)=>listing.id === listingId) ;
