@@ -49,7 +49,7 @@ const ChatBox = () => {
   const handleSendMessage = async (e)=>{
       e.preventDefault() ;
       if(!newMessage.trim() || isSending) return ;
-      setMessages([...messages, {id: Date.now(), chatId: chat?.id || chatId, sender_id: user.id, message: newMessage, createdAt: new Date()}]) ;
+      setMessages([...messages, {id: Date.now(), chatId: chat.id, sender_id: user.id, message: newMessage, createdAt: new Date()}]) ;
       setNewMessage("")
   }
 
@@ -132,7 +132,7 @@ const ChatBox = () => {
                 className={`text-[10px] mt-1.5 flex items-center justify-end font-medium tracking-tight select-none
                   ${isMe ? "text-indigo-200/90" : "text-slate-400"}`}
               >
-                {message.createdAt ? format(new Date(message.createdAt), "MMM dd 'at' h:mm a") : ""}
+                {format(new Date(message.createdAt), "MMM dd 'at' h:mm a")}
               </div>
             </div>
           </div>

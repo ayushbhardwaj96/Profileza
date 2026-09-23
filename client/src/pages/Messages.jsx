@@ -16,21 +16,19 @@ const Messages = () => {
   const [loading, setLoading] = useState(true) ;
 
   const formatTime = (dateString) => {
-    if (!dateString) return '';
-    try {
-      const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-      if (isToday(date)) {
-        return 'Today ' + format(date, "HH:mm");
-      }
-      if (isYesterday(date)) {
-        return 'Yesterday ' + format(date, "HH:mm");
-      }
-      return format(date, "MMM d");
-    } catch {
-      return '';
-    }
-  };
+         if(!dateString) return ;
+
+         const date = parseISO(dateString)
+
+         if(isToday(date)){
+          return 'Today' + format(date, "HH:mm") ;
+         }
+         if(isYesterday(date)){
+          return 'Yesterday' + format(date, "HH:mm") ;
+         }
+
+         return format(date, "MMM d")
+  }
 
   const filterChats = useMemo(()=>{
         const query = searchQuery.toLowerCase() ;

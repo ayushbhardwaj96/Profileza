@@ -12,66 +12,31 @@ export const getAllUserListing = createAsyncThunk("listing/getAllUserListing", a
         return data;
     } catch (error) {
         console.log(error);
-        return null;
+        return [];
     }
 });
 
-// Get all public listings
-export const getAllPublicListing = createAsyncThunk("listing/getAllPublicListing", async () => {
-    try {
-        const { data } = await api.get("/api/listing/all");
-        return data;
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
-});
 
 const listingSlice = createSlice({
-    name: "listing",
+    name: "listing" ,
     initialState: {
-        listings: dummyListings,
-        userListings: dummyListings,
+        listings : dummyListings,
+        userListings :dummyListings,
         balance: {
             earned: 0,
             withdrawn: 0,
-            available: 0,
-            avilable: 0,
-        },
+            avilable: 0
+        }
     },
     reducers: {
-        setListings: (state, action) => {
-            state.listings = action.payload;
-        },
-    },
-    extraReducers: (builder) => {
-        builder.addCase(getAllUserListing.fulfilled, (state, action) => {
-            if (!action.payload) return;
-            if (action.payload.userListings) {
-                state.userListings = action.payload.userListings;
-            } else if (Array.isArray(action.payload)) {
-                state.userListings = action.payload;
-            }
-            if (action.payload.balance) {
-                state.balance = {
-                    ...state.balance,
-                    ...action.payload.balance,
-                    available: action.payload.balance.available ?? action.payload.balance.avilable ?? state.balance.available,
-                    avilable: action.payload.balance.available ?? action.payload.balance.avilable ?? state.balance.avilable,
-                };
-            }
-        });
-        builder.addCase(getAllPublicListing.fulfilled, (state, action) => {
-            if (!action.payload) return;
-            if (action.payload.listings) {
-                state.listings = action.payload.listings;
-            } else if (Array.isArray(action.payload)) {
-                state.listings = action.payload;
-            }
-        });
-    },
-});
+        setListings: (state, action)=>{
+            state.listings = action.payload
+        }
+    }
 
-export const { setListings } = listingSlice.actions;
+})
 
-export default listingSlice.reducer;
+
+export const {setListings} = listingSlice.actions ;
+
+export default listingSlice.reducer

@@ -3,7 +3,7 @@ import { X, CirclePlus } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@clerk/clerk-react";
 import { toast } from "react-hot-toast";
-import api from "../configs/axios";
+// import api from "../configs/axios";
 import { getAllUserListing } from "../app/features/listingSlice";
 
 const WithdrawModal = ({ onClose }) => {
@@ -22,22 +22,7 @@ const WithdrawModal = ({ onClose }) => {
 
     const handleSubmission = async (e) => {
         e.preventDefault();
-        try {
-            toast.loading("Applying for withdrawal...");
-            const token = await getToken();
-            const { data } = await api.post(
-                "/api/withdrawal/apply",
-                { amount: Number(amount), account },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            toast.dismiss();
-            toast.success(data?.message || "Withdrawal applied successfully!");
-            dispatch(getAllUserListing({ getToken }));
-            onClose();
-        } catch (error) {
-            toast.dismiss();
-            toast.error(error?.response?.data?.message || error.message);
-        }
+         
     };
 
     return (
