@@ -90,43 +90,43 @@ const syncUserUpdation = inngest.createFunction(
     }
 )
 
-// Inngest Function to send purchase email to the customer
-const sendPurchaseEmail = inngest.createFunction(
-    { id: 'send-purchase-email' },
-    { event: "app/purchase" },
-    async ({ event }) => {
+// // Inngest Function to send purchase email to the customer
+// const sendPurchaseEmail = inngest.createFunction(
+//     { id: 'send-purchase-email' },
+//     { event: "app/purchase" },
+//     async ({ event }) => {
 
-        const { transaction } = event.data;
+//         const { transaction } = event.data;
 
-        const customer = await prisma.user.findFirst({
-            where: { id: transaction.userId },
-        });
+//         const customer = await prisma.user.findFirst({
+//             where: { id: transaction.userId },
+//         });
 
-        const listing = await prisma.listing.findFirst({
-            where: { id: transaction.listingId },
-        });
+//         const listing = await prisma.listing.findFirst({
+//             where: { id: transaction.listingId },
+//         });
 
-        const credential = await prisma.credential.findFirst({
-            where: { listingId: transaction.listingId },
-        });
+//         const credential = await prisma.credential.findFirst({
+//             where: { listingId: transaction.listingId },
+//         });
 
-        await sendEmail({
-            to: customer.email,
-            subject: "Your Credentials for the account you purchased",
-            html: `
-                        <h2>Thank you for purchasing account @${listing.username} of ${listing.platform} platform</h2>
-                        <p>Here are your credentials for the listing you purchased.</p>
+//         await sendEmail({
+//             to: customer.email,
+//             subject: "Your Credentials for the account you purchased",
+//             html: `
+//                         <h2>Thank you for purchasing account @${listing.username} of ${listing.platform} platform</h2>
+//                         <p>Here are your credentials for the listing you purchased.</p>
                         
-                        <h3>New Credentials</h3>
-                        <div>
-                            ${credential.updatedCredential.map((cred) => `<p>${cred.name} : ${cred.value}</p>`).join("")}
-                        </div>
-                        <p>If you have any questions, please contact us at <a href="mailto:support@example.com">support@example.com</a></p>
-                    `,
-        });
+//                         <h3>New Credentials</h3>
+//                         <div>
+//                             ${credential.updatedCredential.map((cred) => `<p>${cred.name} : ${cred.value}</p>`).join("")}
+//                         </div>
+//                         <p>If you have any questions, please contact us at <a href="mailto:support@example.com">support@example.com</a></p>
+//                     `,
+//         });
 
-    }
-)
+//     }
+// )
 
  
 
@@ -134,8 +134,7 @@ const sendPurchaseEmail = inngest.createFunction(
 export const functions = [
     syncUserCreation,
      syncUserDeletion,
-    syncUserUpdation,
-    sendPurchaseEmail,
+    syncUserUpdation
     
 
 ];
