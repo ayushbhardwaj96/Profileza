@@ -1,8 +1,17 @@
-import React, { useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { useState } from "react";
+import { X, CirclePlus } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { useAuth } from "@clerk/clerk-react";
+import { toast } from "react-hot-toast";
+import api from "../configs/axios";
+import { getAllUserListing } from "../app/features/listingSlice";
 
 
 const CredentialSubmission = ({ onClose, listing }) => {
+
+    const { getToken } = useAuth();
+    const dispatch = useDispatch();
+
     const [newField, setNewField] =  useState('')
     const [credential, setCredential] = useState([
         {type: "email", name: "Email", value: ""},
@@ -19,6 +28,31 @@ const CredentialSubmission = ({ onClose, listing }) => {
     const handleSubmission = async(e) => {
         e.preventDefault()
         console.log(credential)
+         try {
+            // check if there is at least one field
+            if (credential.length === 0) {
+                return toast.error("Please add at least one field");
+            }
+
+            // check all fields are filled
+            for (const cred of credential) {
+                if (!cred.value) {
+                    return toast.error(`Please fill in the ${cred.name} field`);
+                }
+            }
+
+            const confirm = window.confirm("Credential will be verified & changed post submission. Are you sure you want to submit?");
+            if (!confirm) return;
+
+            const token = await getToken();
+            const { data } = await api.post("/api/listing/add-credential", { credential, listingId: listing.id }, { headers: { Authorization: `Bearer ${token}` } });
+            toast.success(data.message);
+            dispatch(getAllUserListing({ getToken }));
+            onClose();
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+            console.log(error);
+        }
     }
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-100 flex items-center justify-center sm:p-4">

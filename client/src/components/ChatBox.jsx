@@ -1,56 +1,82 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { X, Send, Loader2Icon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { dummyChats } from "../assets/assets";
-import { Loader2Icon, Send, X } from "lucide-react";
 import { clearChat } from "../app/features/chatSlice";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { format } from "date-fns";
+import { toast } from "react-hot-toast";
+import api from "../configs/axios";
 
 const ChatBox = () => {
-  const { listing, isOpen, chatId } = useSelector((state) => state.chat);
-  const dispatch = useDispatch();
+   const { listing, isOpen, chatId } = useSelector((state) => state.chat);
 
-  const user = { id: "user_2" };
+    const dispatch = useDispatch();
+    const { user } = useUser();
+    const { getToken } = useAuth();
    
 
-  const [chat, setChat] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
+ const [chat, setChat] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSending, setIsSending] = useState(false);
+    const messagesEndRef = useRef(null);
 
   const fetchChat = async () => {
-    setChat(dummyChats[0]);
-    setMessages(dummyChats[0].messages);
-    setIsLoading(false);
+     try {
+            const token = await getToken();
+            const { data } = await api.post("/api/chat", { listingId: listing.id, chatId }, { headers: { Authorization: `Bearer ${token}` } });
+            setChat(data?.chat);
+            setMessages(data?.chat?.messages || []);
+            setIsLoading(false);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+            console.log(error);
+        }
   };
 
-  useEffect(() => {
-    if (listing) {
-      fetchChat();
-    }
-  }, [listing]);
+   useEffect(() => {
+        if (listing) {
+            fetchChat();
+            const interval = setInterval(() => {
+                fetchChat();
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [listing]);
 
   useEffect(() => {
-    if (!isOpen) {
-      setChat(null);
-      setMessages([]);
-      setIsLoading(true);
-      setNewMessage("");
-      setIsSending(false);
-    }
-  }, [isOpen]);
+        if (!isOpen) {
+            setChat(null);
+            setMessages([]);
+            setIsLoading(true);
+            setNewMessage("");
+            setIsSending(false);
+        }
+    }, [isOpen])
 
 //   --for automatic scrolling---
-  const messagesEndRef = useRef(null)
+  // const messagesEndRef = useRef(null)
   useEffect(()=>{
       messagesEndRef.current?.scrollIntoView({behavior: "smooth"})
   },[messages.length])
 
   const handleSendMessage = async (e)=>{
-      e.preventDefault() ;
-      if(!newMessage.trim() || isSending) return ;
-      setMessages([...messages, {id: Date.now(), chatId: chat.id, sender_id: user.id, message: newMessage, createdAt: new Date()}]) ;
-      setNewMessage("")
+      e.preventDefault();
+        if (!newMessage.trim() || isSending) return;
+        try {
+            setIsSending(true);
+            const token = await getToken();
+            const { data } = await api.post("/api/chat/send-message", { chatId: chat.id, message: newMessage }, { headers: { Authorization: `Bearer ${token}` } });
+            setMessages([...messages, data.newMessage]);
+            setNewMessage("");
+            setIsSending(false);
+
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+            console.log(error);
+            setIsSending(false);
+        }
   }
 
   if (!isOpen || !listing) return null;

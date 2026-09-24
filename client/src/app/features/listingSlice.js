@@ -1,5 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit'
-import { dummyListings } from '../../assets/assets'
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../configs/axios";
 
@@ -31,8 +30,8 @@ export const getAllUserListing = createAsyncThunk("listing/getAllUserListing", a
 const listingSlice = createSlice({
     name: "listing" ,
     initialState: {
-        listings : dummyListings,
-        userListings :dummyListings,
+        listings :  [],
+        userListings :[],
         balance: {
             earned: 0,
             withdrawn: 0,
@@ -43,7 +42,16 @@ const listingSlice = createSlice({
         setListings: (state, action)=>{
             state.listings = action.payload
         }
-    }
+    },
+     extraReducers: (builder) => {
+        builder.addCase(getAllPublicListing.fulfilled, (state, action) => {
+            state.listings = action.payload.listings;
+        });
+        builder.addCase(getAllUserListing.fulfilled, (state, action) => {
+            state.userListings = action.payload.listings;
+            state.balance = action.payload.balance;
+        });
+    },
 
 })
 

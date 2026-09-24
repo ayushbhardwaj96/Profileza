@@ -1,11 +1,14 @@
 import AdminTitle from '../../components/admin/AdminTitle';
 import { useState } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import { useEffect } from 'react';
+import api from '../../configs/axios';
+import { toast } from 'react-hot-toast';
 import ListingDetailsModal from '../../components/admin/ListingDetailsModal';
 import { Loader2Icon } from 'lucide-react';
-import { dummyOrders } from '../../assets/assets';
 
 const Transactions = () => {
+    const { getToken } = useAuth();
     const currency = import.meta.env.VITE_CURRENCY || '$';
 
     const [trasactions, setTransactions] = useState([]);
@@ -13,8 +16,15 @@ const Transactions = () => {
     const [showModal, setShowModal] = useState(null);
 
     const getTransactions = async () => {
-        setTransactions(dummyOrders);
-        setLoading(false);
+        try {
+            const token = await getToken();
+            const { data } = await api.get(`/api/admin/transactions`, { headers: { Authorization: `Bearer ${token}` } });
+            setTransactions(data.transactions);
+            setLoading(false);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error.message);
+            console.log(error);
+        }
     };
 
     useEffect(() => {
@@ -47,10 +57,7 @@ const Transactions = () => {
                                 <td className='pl-4 py-3'>{index + 1}.</td>
                                 <td className='px-4 py-3'>@{t.listing.username}</td>
                                 <td className='px-4 py-3'>{t.listing.platform}</td>
-                                <td className='px-4 py-3'>
-                                    {currency}
-                                    {t.amount}
-                                </td>
+                                <td className='px-4 py-3'>{currency}{t.amount}</td>
                                 <td className='px-4 py-3'>{new Date(t.createdAt).toLocaleString()}</td>
                                 <td className='px-4 py-3'>
                                     <button onClick={() => setShowModal(t.listing)} className='text-indigo-600 font-medium'>
@@ -63,7 +70,12 @@ const Transactions = () => {
                 </table>
             </div>
             {showModal && (
-                <ListingDetailsModal listing={showModal} onClose={() => { setShowModal(null); }} />
+                <ListingDetailsModal
+                    listing={showModal}
+                    onClose={() => {
+                        setShowModal(null);
+                    }}
+                />
             )}
         </div>
     );

@@ -1,14 +1,10 @@
 import { NavLink } from 'react-router-dom'
+import { useUser } from "@clerk/clerk-react"
 import { BanknoteIcon, CheckIcon, LayoutDashboardIcon, ListIcon, Settings2Icon, WalletIcon } from 'lucide-react';
-import { assets } from '../../assets/assets';
 
 const AdminSidebar = () => {
 
-    const user = {
-        firstName: 'John',
-        lastName: 'Doe',
-        imageUrl: assets.user_profile,
-    }
+    const { user } = useUser()
 
     const adminNavlinks = [
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboardIcon },

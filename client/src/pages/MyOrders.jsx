@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import toast from 'react-hot-toast';
 import api from '../configs/axios';
-import { dummyOrders, platformIcons } from '../assets/assets';
+import {   platformIcons } from '../assets/assets';
 import { CheckCircle2, Loader2Icon, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -16,15 +16,23 @@ const MyOrders = () => {
     const [expandedId, setExpandedId] = useState(null);
 
     const fetchOrders = async () => {
-        setOrders(dummyOrders)
-        setLoading(false)
+       try {
+            setLoading(true);
+            const token = await getToken();
+            const { data } = await api.get('/api/listing/user-orders', { headers: { Authorization: `Bearer ${token}` } });
+            setOrders(data.orders);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    useEffect(() => {
-        
+     useEffect(() => {
+        if (user && isLoaded) {
             fetchOrders();
-        
-    }, []);
+        }
+    }, [isLoaded, user]);
 
     const mask = (val, type) => {
         if (!val && val !== 0) return '-';

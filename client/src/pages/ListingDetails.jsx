@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { getProfileLink, platformIcons } from '../assets/assets'
-import { useDispatch, useSelector } from 'react-redux'
-import { ArrowLeftIcon,  ArrowUpRightFromSquareIcon, CheckCircle2, Loader2Icon,DollarSign, ChevronLeftIcon, ChevronRightIcon, Users, LineChart, Eye, Calendar, MapPin, MessageSquareMoreIcon, ShoppingBagIcon } from 'lucide-react'
-import { setChat } from '../app/features/chatSlice'
+import { DollarSign, Users, LineChart, Eye, Calendar, MapPin, CheckCircle2, UserCircle, ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, Loader2Icon, ShoppingBagIcon, ArrowUpRightFromSquareIcon, MessageSquareMoreIcon } from 'lucide-react';
+import { getProfileLink, platformIcons } from '../assets/assets';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { setChat } from '../app/features/chatSlice';
+import { useAuth, useClerk, useUser } from '@clerk/clerk-react';
+import { toast } from 'react-hot-toast';
+import api from '../configs/axios';
 
 const ListingDetails = () => {
 
-  const dispatch = useDispatch()
+   const { user, isLoaded } = useUser();
+    const { getToken } = useAuth();
+    const { openSignIn } = useClerk();
 
-  const navigate = useNavigate()
-  const currency = import.meta.env.VITE_CURRENCY || '$' 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const currency = import.meta.env.VITE_CURRENCY || '$'; 
 
   const [listing, setListing] = useState(null)
   const profileLink = listing && getProfileLink(listing.platform, listing.username)
@@ -24,13 +30,25 @@ const ListingDetails = () => {
   const prevSlide = ()=> setCurrent((prev)=> (prev === 0 ? images.length - 1 :  prev -1))
   const nextSlide = ()=> setCurrent((prev)=> (prev ===   images.length - 1 ? 0 :  prev +1))
 
-  const purchaseAccount = async () =>{
-
-  }
+  const purchaseAccount = async () => {
+        try {
+            if (!user) return openSignIn();
+            toast.loading('creating payment link...');
+            const token = await getToken();
+            const { data } = await api.get(`/api/listing/purchase-account/${listing.id}`, { headers: { Authorization: `Bearer ${token}` } });
+            toast.dismissAll();
+            window.location.href = data.paymentLink;
+        } catch (error) {
+            toast.dismissAll();
+            toast.error(error?.response?.data?.message || error.message);
+            console.log(error);
+        }
+    };
 
   const loadChatbox = () => {
-       dispatch(setChat)
-       dispatch(setChat({listing: listing}))
+        if (!isLoaded || !user) return toast('Please login to chat with seller');
+        if (user.id === listing.ownerId) return toast("You can't chat with your own listing");
+        dispatch(setChat({ listing: listing }));
   }
 
   useEffect(()=>{

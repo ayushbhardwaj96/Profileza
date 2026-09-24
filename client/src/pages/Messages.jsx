@@ -1,15 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { dummyChats } from '../assets/assets';
-import { MessageCircle, Search } from 'lucide-react';
-import {format, isToday, isYesterday, parseISO} from 'date-fns'
-import { useDispatch } from 'react-redux';
-import { setChat } from '../app/features/chatSlice';
+import { useState, useMemo, useEffect } from "react";
+import { MessageCircle, Search } from "lucide-react";
+import { format, isToday, isYesterday, parseISO } from "date-fns";
+import { setChat } from "../app/features/chatSlice";
+import { useDispatch } from "react-redux";
+import api from "../configs/axios";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { toast } from "react-hot-toast";
 
 const Messages = () => {
 
-  const dispatch = useDispatch() ;
+ const dispatch = useDispatch();
+    const { user, isLoaded } = useUser();
+    const { getToken } = useAuth();
 
-  const user = {id: "user_1"} ;
 
   const [chats, setChats] = useState([])
   const [searchQuery, setSearchQuery] = useState('') ;
@@ -43,17 +46,29 @@ const Messages = () => {
   }
 
   const fetchUserChats = async () => {
-    setChats(dummyChats)
-    setLoading(false)
-  }
+        try {
 
-  useEffect(()=>{
-    fetchUserChats()
-    const interval = setInterval(()=>{
-      fetchUserChats() ;
-    }, 10*1000) ;
-    return ()=> clearInterval(interval)
-  },[])
+            const token = await getToken();
+            const { data } = await api.get("/api/chat/user", { headers: { Authorization: `Bearer ${token}` } });
+            setChats(data.chats);
+            setLoading(false);
+
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error.message);
+            console.log(error);
+            setLoading(false);
+        }
+    };
+
+     useEffect(() => {
+        if (user && isLoaded) {
+            fetchUserChats();
+            const interval = setInterval(() => {
+                fetchUserChats();
+            }, 10*1000);
+            return () => clearInterval(interval);
+        }
+    }, [user, isLoaded]);
 
 
   return (
