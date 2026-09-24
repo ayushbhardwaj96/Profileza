@@ -12,7 +12,7 @@ const LatestListings = () => {
       <Title title="Newly Featured" description="Explore the absolute best social profiles trending right now." />
 
       <div className='flex flex-col gap-6 px-6'>
-          {listings.slice(0,4).map((listing, index) =>(
+          {listings?.slice(0,4).map((listing, index) =>(
                 <div key={index} className='mx-auto w-full max-w-3xl rounded-xl'>
                     <ListingCard listing={listing} />
                 </div>
